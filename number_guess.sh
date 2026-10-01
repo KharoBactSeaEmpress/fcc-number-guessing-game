@@ -24,13 +24,22 @@ fi
 echo "Guess the secret number between 1 and 1000:"
 read GUESS
 
-GUESS_COUNT=1
+GUESS_COUNT=0
 
-while [[ $GUESS -ne $SECRET_NUMBER ]]
+while true
 do
   if [[ ! $GUESS =~ ^[0-9]+$ ]]
   then
     echo "That is not an integer, guess again:"
+    read GUESS
+    continue
+  fi
+
+  ((GUESS_COUNT++))
+
+  if [[ $GUESS -eq $SECRET_NUMBER ]]
+  then
+    break
   elif [[ $GUESS -gt $SECRET_NUMBER ]]
   then
     echo "It's lower than that, guess again:"
@@ -39,9 +48,7 @@ do
   fi
 
   read GUESS
-  ((GUESS_COUNT++))
 done
-
 
 INSERT_GAME_RESULT=$($PSQL "INSERT INTO games(user_id, guesses) VALUES($USER_ID, $GUESS_COUNT);")
 
